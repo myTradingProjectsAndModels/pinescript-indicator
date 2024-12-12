@@ -1,0 +1,19 @@
+//@version=5
+
+indicator(title = "VW-BBand + MACD + ATR", shorttitle = "VW-BBand + MACD + ATR", timeframe = "", timeframe_gaps = true, overlay = true)
+period = input.int(defval = 13, title = "BBand Period", minval = 7, maxval = 100, step = 1)
+mult = input.float(defval = 2, title = "BBand Mult", minval = 1, maxval = 10, step = 0.1)
+fast = input.int(defval = 13, title = "MACD Fast", minval = 1, maxval = 100, step = 1)
+slow = input.int(defval = 26, title = "MACD Slow", minval = 1, maxval = 100, step = 1)
+atr_period = input.int(defval = 13, title = "ATR Period", minval = 1, maxval = 100, step = 1)
+//_timeframe = input.timeframe(defval = "1d", title = "timeframe")
+
+source = close
+midprice = ta.vwma(source, period)
+highprice = midprice + mult * ta.stdev(source, period) + (ta.vwma(source, fast) - ta.vwma(source, slow)) + ta.atr(atr_period)
+lowprice = midprice - mult * ta.stdev(source, period) + (ta.vwma(source, fast) - ta.vwma(source, slow)) - ta.atr(atr_period)
+
+plot(midprice, "MidPrice", color = color.rgb(238, 255, 82), linewidth = 2)
+_high = plot(highprice, "HighPrice", color =  color.rgb(100, 28, 112))
+_low = plot(lowprice, "LowPrice", color =  color.rgb(100, 28, 112))
+fill(_high, _low, color = color.rgb(223, 64, 251, 47))
